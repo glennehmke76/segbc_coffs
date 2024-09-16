@@ -1,0 +1,13 @@
+-- add to QGIS and save to gpkg (as rasterise does not work from database)
+-- rasterise
+processing.run("gdal:rasterize", {'INPUT':'/Users/glennehmke/Downloads/tmp.gpkg|layername=segbc_prioritisation_1','FIELD':'priority','BURN':0,'USE_Z':False,'UNITS':1,'WIDTH':5,'HEIGHT':5,'EXTENT':None,'NODATA':0,'OPTIONS':'','DATA_TYPE':0,'INIT':None,'INVERT':False,'EXTRA':'','OUTPUT':'/Users/glennehmke/MEGA/segbc/raster/segbc_prioritisation_1_r.tif'})
+
+-- re-import raster
+  -- to localhost
+raster2pgsql -s 3308 -d -I -C -M /Users/glennehmke/MEGA/segbc/raster/segbc_prioritisation_1_r.tif -F -t 500x500 public.segbc_prioritisation_1_r | psql -U glennehmke -d birdata -h localhost -p 5432
+  -- to AcuGIS
+raster2pgsql -s 3308 -d -I -C -M /Users/glennehmke/MEGA/segbc/raster/segbc_prioritisation_1_r.tif -F -t 500x500 public.segbc_prioritisation_1_r | psql -U birdlife -d birdlife_birdata -h birdlife.webgis1.com -p 5432
+
+drop table if exists o_4_segbc_prioritisation_1_r;
+
+gdalinfo /Users/glennehmke/MEGA/segbc/raster/segbc_prioritisation_1_r.tif
